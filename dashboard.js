@@ -2,6 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+// Configuração Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyAtaFjcCuiMOrQatVICzaAX2KDKNNeKXOQ",
   authDomain: "test123-e451a.firebaseapp.com",
@@ -11,6 +12,7 @@ const firebaseConfig = {
   appId: "1:198813089460:web:3ca72f2ccaf09e796fa1e1"
 };
 
+// Inicializa Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -23,12 +25,14 @@ onAuthStateChanged(auth, async (user) => {
 
     if (snap.exists()) {
       const data = snap.data();
-      document.getElementById("saudacao").textContent = "Hi, " + data.nome + "!";
-      document.getElementById("nome").textContent = data.nome || "";
-      document.getElementById("email").textContent = data.email || "";
-      document.getElementById("telefone").textContent = data.telefone || "(não informado)";
+      document.getElementById("saudacao").textContent = "Bem-vindo, " + data.nome + "!";
+      document.getElementById("nome").value = data.nome || "";
+      document.getElementById("email").value = data.email || "";
+    } else {
+      alert("Dados não encontrados.");
     }
   } else {
+    // Se não estiver logado, redireciona para login
     window.location.href = "index.html";
   }
 });
