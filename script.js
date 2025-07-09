@@ -1,9 +1,9 @@
-// Importa os módulos do Firebase (via ES module)
+// Importa os módulos Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// Configuração do Firebase (use a sua)
+// Configuração Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyAtaFjcCuiMOrQatVICzaAX2KDKNNeKXOQ",
   authDomain: "test123-e451a.firebaseapp.com",
@@ -13,18 +13,18 @@ const firebaseConfig = {
   appId: "1:198813089460:web:3ca72f2ccaf09e796fa1e1"
 };
 
-// Inicializa o Firebase
+// Inicializa Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Alternar entre formulário de cadastro e login
+// Alternar telas
 window.alternarForm = function () {
   document.getElementById("cadastro").classList.toggle("hidden");
   document.getElementById("login").classList.toggle("hidden");
 }
 
-// Função de cadastro
+// Cadastro
 window.cadastrar = async function () {
   const nome = document.getElementById("nome").value.trim();
   const email = document.getElementById("emailCadastro").value.trim();
@@ -39,7 +39,7 @@ window.cadastrar = async function () {
     const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
     const user = userCredential.user;
 
-    // Salva os dados no Firestore
+    // Salvar no Firestore
     await setDoc(doc(db, "usuarios", user.uid), {
       nome: nome,
       email: email
@@ -47,11 +47,10 @@ window.cadastrar = async function () {
 
     alert("Cadastro realizado com sucesso!");
 
-    // Limpa os campos
+    // Limpar campos
     document.getElementById("nome").value = '';
     document.getElementById("emailCadastro").value = '';
     document.getElementById("senhaCadastro").value = '';
-
     alternarForm();
 
   } catch (error) {
@@ -59,7 +58,7 @@ window.cadastrar = async function () {
   }
 }
 
-// Função de login
+// Login
 window.logar = async function () {
   const email = document.getElementById("emailLogin").value.trim();
   const senha = document.getElementById("senhaLogin").value;
@@ -69,7 +68,7 @@ window.logar = async function () {
     const user = userCredential.user;
 
     alert("Login bem-sucedido: " + user.email);
-    // Aqui você pode redirecionar ou mostrar outro conteúdo se quiser
+    // Redirecione se quiser aqui (ex: window.location.href = "dashboard.html")
 
   } catch (error) {
     alert("Erro no login: " + error.message);
