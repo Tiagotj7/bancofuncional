@@ -5,11 +5,11 @@ import { getFirestore, doc, getDoc, updateDoc, serverTimestamp } from "https://w
 // Configuração Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyAtaFjcCuiMOrQatVICzaAX2KDKNNeKXOQ",
-  authDomain: "test123-e451a.firebaseapp.com",
-  projectId: "test123-e451a",
-  storageBucket: "test123-e451a.appspot.com",
+  authDomain: "test123-e1451a.firebaseapp.com",
+  projectId: "test123-e1451a",
+  storageBucket: "test123-e1451a.appspot.com",
   messagingSenderId: "198813089460",
-  appId: "1:198813089760:web:3ca72f2ccaf09e796fa1e1"
+  appId: "1:198813089460:web:3ca72f2ccaf09e796fa1e1"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -42,18 +42,18 @@ function formatarDataHora(timestamp) {
   });
 }
 
-// Verificar autenticação
+// Verificar autenticação e carregar dados do usuário
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     try {
-      // Buscar dados do usuário
+      // Buscar dados do usuário no Firestore
       const docRef = doc(db, "usuarios", user.uid);
       const docSnap = await getDoc(docRef);
       
       if (docSnap.exists()) {
         const userData = docSnap.data();
         
-        // Atualizar informações na tela
+        // Atualizar informações na tela com os dados do cadastro
         document.getElementById('userName').textContent = userData.nome || 'Usuário';
         document.getElementById('userName2').textContent = userData.nome || 'Não informado';
         document.getElementById('userEmail').textContent = userData.email || user.email;
@@ -66,7 +66,8 @@ onAuthStateChanged(auth, async (user) => {
         });
         
       } else {
-        // Fallback se não encontrar dados
+        console.log("Documento do usuário não encontrado");
+        // Fallback se não encontrar dados no Firestore
         document.getElementById('userName').textContent = 'Usuário';
         document.getElementById('userName2').textContent = 'Não informado';
         document.getElementById('userEmail').textContent = user.email;
@@ -74,7 +75,7 @@ onAuthStateChanged(auth, async (user) => {
         document.getElementById('lastAccess').textContent = 'Agora';
       }
     } catch (error) {
-      console.error('Erro ao buscar dados:', error);
+      console.error('Erro ao buscar dados do usuário:', error);
       // Fallback em caso de erro
       document.getElementById('userName').textContent = 'Usuário';
       document.getElementById('userName2').textContent = 'Erro ao carregar';
@@ -83,6 +84,7 @@ onAuthStateChanged(auth, async (user) => {
       document.getElementById('lastAccess').textContent = 'Agora';
     }
   } else {
+    // Usuário não está logado, redirecionar para login
     window.location.href = 'index.html';
   }
 });
