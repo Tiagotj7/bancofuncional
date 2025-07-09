@@ -1,12 +1,12 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firestore/9.23.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 // Configuração Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyAtaFjcCuiMOrQatVICzaAX2KDKNNeKXOQ",
   authDomain: "test123-e1451a.firebaseapp.com",
-  projectId: "test123-e1451a",
+  projectId: "test123-e451a",
   storageBucket: "test123-e1451a.appspot.com",
   messagingSenderId: "198813089460",
   appId: "1:198813089460:web:3ca72f2ccaf09e796fa1e1"
