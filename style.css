@@ -1,17 +1,20 @@
+/* Estilo global */
 * {
   box-sizing: border-box;
   font-family: Arial, sans-serif;
 }
 
 body {
+  margin: 0;
+  padding: 0;
   background: #f4f4f4;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  margin: 0;
 }
 
+/* Container Login/Cadastro */
 .container {
   background: #fff;
   padding: 2rem;
@@ -32,6 +35,12 @@ input {
   margin-bottom: 1rem;
   border: 1px solid #ccc;
   border-radius: 4px;
+  transition: border-color 0.3s;
+}
+
+input:focus {
+  border-color: #333;
+  outline: none;
 }
 
 button {
@@ -42,6 +51,7 @@ button {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  transition: background 0.3s;
 }
 
 button:hover {
@@ -58,4 +68,64 @@ button:hover {
 
 .hidden {
   display: none;
+}
+
+/* ========================
+   Estilo para dashboard.html
+   ======================== */
+
+.dashboard {
+  background: #fff;
+  border-radius: 8px;
+  width: 320px;
+  padding: 2rem;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.header {
+  background: #000;
+  padding: 1.5rem 1rem;
+  color: white;
+  border-radius: 8px 8px 0 0;
+  position: relative;
+}
+
+.avatar {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+#saudacao {
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.info {
+  padding: 2rem 1rem;
+  text-align: left;
+}
+
+.info div {
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.info div b {
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+button {
+  margin-top: 1rem;
+}
+
+/* Responsivo básico */
+@media (max-width: 400px) {
+  .container,
+  .dashboard {
+    width: 90%;
+  }
 }
