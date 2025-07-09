@@ -6,9 +6,9 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstati
 // Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyAtaFjcCuiMOrQatVICzaAX2KDKNNeKXOQ",
-  authDomain: "test123-e1451a.firebaseapp.com",
+  authDomain: "test123-e451a.firebaseapp.com",
   projectId: "test123-e451a",
-  storageBucket: "test123-e1451a.appspot.com",
+  storageBucket: "test123-e451a.appspot.com",
   messagingSenderId: "198813089460",
   appId: "1:198813089460:web:3ca72f2ccaf09e796fa1e1"
 };
