@@ -1,7 +1,6 @@
-// Importa os módulos Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firestore/9.23.0/firebase-firestore.js";
 
 // Configuração Firebase
 const firebaseConfig = {
@@ -10,86 +9,91 @@ const firebaseConfig = {
   projectId: "test123-e451a",
   storageBucket: "test123-e451a.appspot.com",
   messagingSenderId: "198813089460",
-  appId: "1:198813089460:web:3ca72f2ccaf09e796fa1e1"
+  appId: "1:198813089760:web:3ca72f2ccaf09e796fa1e1"
 };
 
-// Inicializa Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Alternar telas
-window.alternarForm = function () {
-  document.getElementById("cadastro").classList.toggle("hidden");
-  document.getElementById("login").classList.toggle("hidden");
+// Função para formatar data
+function formatarData(timestamp) {
+  if (!timestamp) return "Não disponível";
+  
+  const data = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+  return data.toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
 }
 
-// Cadastro
-window.cadastrar = async function () {
-  const nome = document.getElementById("nome").value.trim();
-  const email = document.getElementById("emailCadastro").value.trim();
-  const senha = document.getElementById("senhaCadastro").value;
+// Função para formatar data e hora
+function formatarDataHora(timestamp) {
+  if (!timestamp) return "Não disponível";
+  
+  const data = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+  return data.toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+}
 
-  console.log("Tentando cadastrar:", { nome, email, senha: senha ? "***" : "vazio" });
-
-  if (!nome || !email || !senha) {
-    alert("Preencha todos os campos.");
-    return;
+// Verificar autenticação
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    try {
+      // Buscar dados do usuário
+      const docRef = doc(db, "usuarios", user.uid);
+      const docSnap = await getDoc(docRef);
+      
+      if (docSnap.exists()) {
+        const userData = docSnap.data();
+        
+        // Atualizar informações na tela
+        document.getElementById('userName').textContent = userData.nome || 'Usuário';
+        document.getElementById('userName2').textContent = userData.nome || 'Não informado';
+        document.getElementById('userEmail').textContent = userData.email || user.email;
+        document.getElementById('memberSince').textContent = formatarData(userData.criadoEm);
+        document.getElementById('lastAccess').textContent = formatarDataHora(userData.ultimoLogin);
+        
+        // Atualizar último acesso
+        await updateDoc(docRef, {
+          ultimoLogin: serverTimestamp()
+        });
+        
+      } else {
+        // Fallback se não encontrar dados
+        document.getElementById('userName').textContent = 'Usuário';
+        document.getElementById('userName2').textContent = 'Não informado';
+        document.getElementById('userEmail').textContent = user.email;
+        document.getElementById('memberSince').textContent = 'Não disponível';
+        document.getElementById('lastAccess').textContent = 'Agora';
+      }
+    } catch (error) {
+      console.error('Erro ao buscar dados:', error);
+      // Fallback em caso de erro
+      document.getElementById('userName').textContent = 'Usuário';
+      document.getElementById('userName2').textContent = 'Erro ao carregar';
+      document.getElementById('userEmail').textContent = user.email;
+      document.getElementById('memberSince').textContent = 'Não disponível';
+      document.getElementById('lastAccess').textContent = 'Agora';
+    }
+  } else {
+    window.location.href = 'index.html';
   }
+});
 
+// Função de logout
+window.logout = async function() {
   try {
-    console.log("Criando usuário no Firebase Auth...");
-    const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
-    const user = userCredential.user;
-    console.log("Usuário criado com UID:", user.uid);
-
-    // Salvar no Firestore
-    console.log("Salvando dados no Firestore...");
-    const docRef = doc(db, "usuarios", user.uid);
-    await setDoc(docRef, {
-      nome: nome,
-      email: email,
-      criadoEm: new Date()
-    });
-    console.log("Dados salvos no Firestore com sucesso!");
-
-    alert("Cadastro realizado com sucesso!");
-
-    // Limpar campos
-    document.getElementById("nome").value = '';
-    document.getElementById("emailCadastro").value = '';
-    document.getElementById("senhaCadastro").value = '';
-    alternarForm();
-
+    await signOut(auth);
+    window.location.href = 'index.html';
   } catch (error) {
-    console.error("Erro no cadastro:", error);
-    alert("Erro ao cadastrar: " + error.message);
+    console.error('Erro ao fazer logout:', error);
+    alert('Erro ao fazer logout: ' + error.message);
   }
-}
-
-// Login
-window.logar = async function () {
-  const email = document.getElementById("emailLogin").value.trim();
-  const senha = document.getElementById("senhaLogin").value;
-
-  console.log("Tentando fazer login:", { email, senha: senha ? "***" : "vazio" });
-
-  if (!email || !senha) {
-    alert("Preencha todos os campos.");
-    return;
-  }
-
-  try {
-    console.log("Fazendo login no Firebase Auth...");
-    const userCredential = await signInWithEmailAndPassword(auth, email, senha);
-    const user = userCredential.user;
-    console.log("Login realizado com sucesso para:", user.email);
-
-    alert("Login bem-sucedido: " + user.email);
-    window.location.href = "dashboard.html";
-
-  } catch (error) {
-    console.error("Erro no login:", error);
-    alert("Erro no login: " + error.message);
-  }
-}
+};
