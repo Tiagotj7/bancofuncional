@@ -42,3 +42,22 @@ function logar() {
   document.getElementById("emailLogin").value = '';
   document.getElementById("senhaLogin").value = '';
 }
+
+/*
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyAtaFjcCuiMOrQatVICzaAX2KDKNNeKXOQ",
+  authDomain: "test123-e451a.firebaseapp.com",
+  projectId: "test123-e451a",
+  storageBucket: "test123-e451a.firebasestorage.app",
+  messagingSenderId: "198813089460",
+  appId: "1:198813089460:web:3ca72f2ccaf09e796fa1e1"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);*/
