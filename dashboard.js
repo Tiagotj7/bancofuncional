@@ -1,12 +1,13 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
-// Configuração Firebase
+// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyAtaFjcCuiMOrQatVICzaAX2KDKNNeKXOQ",
   authDomain: "test123-e1451a.firebaseapp.com",
-  projectId: "test123-e451a",
+  projectId: "test123-e1451a",
   storageBucket: "test123-e1451a.appspot.com",
   messagingSenderId: "198813089460",
   appId: "1:198813089460:web:3ca72f2ccaf09e796fa1e1"
@@ -15,49 +16,63 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const storage = getStorage(app);
 
-// Verificar autenticação e carregar dados do usuário
+const profileImage = document.getElementById("profileImage");
+const uploadInput = document.getElementById("uploadInput");
+
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     try {
-      // Buscar dados do usuário no Firestore
       const docRef = doc(db, "usuarios", user.uid);
       const docSnap = await getDoc(docRef);
-      
+
       if (docSnap.exists()) {
-        const userData = docSnap.data();
-        
-        // Atualizar informações na tela com os dados do cadastro (apenas nome e email)
-        document.getElementById('userName').textContent = userData.nome || 'Usuário';
-        document.getElementById('userName2').textContent = userData.nome || 'Não informado';
-        document.getElementById('userEmail').textContent = userData.email || user.email;
-      } else {
-        console.log("Documento do usuário não encontrado");
-        // Fallback se não encontrar dados no Firestore
-        document.getElementById('userName').textContent = 'Usuário';
-        document.getElementById('userName2').textContent = 'Não informado';
-        document.getElementById('userEmail').textContent = user.email;
+        const data = docSnap.data();
+        document.getElementById("userName").textContent = data.nome || "Usuário";
+        document.getElementById("userName2").textContent = data.nome || "Não informado";
+        document.getElementById("userEmail").textContent = data.email || user.email;
+
+        // Atualiza imagem se existir
+        if (data.fotoURL) {
+          profileImage.src = data.fotoURL;
+        }
       }
-    } catch (error) {
-      console.error('Erro ao buscar dados do usuário:', error);
-      // Fallback em caso de erro
-      document.getElementById('userName').textContent = 'Usuário';
-      document.getElementById('userName2').textContent = 'Erro ao carregar';
-      document.getElementById('userEmail').textContent = user.email;
+    } catch (err) {
+      console.error("Erro ao buscar dados:", err);
     }
+
+    // Upload de imagem
+    uploadInput.addEventListener("change", async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const storageRef = ref(storage, `avatars/${user.uid}`);
+      try {
+        await uploadBytes(storageRef, file);
+        const downloadURL = await getDownloadURL(storageRef);
+        profileImage.src = downloadURL;
+
+        // Salva no Firestore
+        await updateDoc(doc(db, "usuarios", user.uid), {
+          fotoURL: downloadURL
+        });
+        alert("Foto de perfil atualizada!");
+      } catch (err) {
+        console.error("Erro ao enviar imagem:", err);
+        alert("Erro ao enviar imagem.");
+      }
+    });
   } else {
-    // Usuário não está logado, redirecionar para login
-    window.location.href = 'index.html';
+    window.location.href = "index.html";
   }
 });
 
-// Função de logout
-window.logout = async function() {
+window.logout = async () => {
   try {
     await signOut(auth);
-    window.location.href = 'index.html';
-  } catch (error) {
-    console.error('Erro ao fazer logout:', error);
-    alert('Erro ao fazer logout: ' + error.message);
+    window.location.href = "index.html";
+  } catch (err) {
+    alert("Erro ao sair: " + err.message);
   }
 };

@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dashboard</title>
-  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="dashboard.css" />
 </head>
 <body>
   <div class="dashboard">
     <div class="header">
-      <div class="avatar">👤</div>
+      <label class="avatar" for="uploadInput">
+        <img id="profileImage" src="default-avatar.png" alt="Avatar" />
+      </label>
+      <input type="file" id="uploadInput" accept="image/*" style="display:none" />
       <div class="welcome">Bem-vindo!</div>
       <div class="user-name" id="userName">Carregando...</div>
     </div>
