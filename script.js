@@ -68,7 +68,7 @@ window.logar = async function () {
     const user = userCredential.user;
 
     alert("Login bem-sucedido: " + user.email);
-    // Redirecione se quiser aqui (ex: window.location.href = "dashboard.html")
+      window.location.href = "dashboard.html";
 
   } catch (error) {
     alert("Erro no login: " + error.message);
